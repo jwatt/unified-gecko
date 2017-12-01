@@ -1030,6 +1030,26 @@ def skia_includes(skia, skia_gpu):
 
 set_config('SKIA_INCLUDES', skia_includes)
 
+option('--enable-skia-xps', help='Enable Skia XPS')
+
+@depends('--enable-skia-xps', skia, milestone, target)
+def skia_xps(value, skia, milestone, target):
+    if target.os != 'WINNT':
+        return False;
+    if value.origin == 'default':
+        if not skia:
+            return None
+        if milestone.is_nightly:
+            return True
+    elif value and not skia:
+        die('Cannot enable Skia XPS without enabling Skia')
+    if skia and value:
+        return True
+
+set_config('MOZ_ENABLE_SKIA_XPS', skia_xps)
+set_define('MOZ_ENABLE_SKIA_XPS', skia_xps)
+
+
 # Build Freetype in the tree
 # ==============================================================
 @depends(target, skia_pdf)

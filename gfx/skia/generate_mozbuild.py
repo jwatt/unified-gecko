@@ -178,7 +178,7 @@ def generate_platform_sources():
     if output:
       sources[plat] = parse_sources(output)
 
-  deps = {':effects' : 'common', ':gpu' : 'gpu', ':pdf' : 'pdf'}
+  deps = {':effects' : 'common', ':gpu' : 'gpu', ':pdf' : 'pdf', ':xps' : 'xps'}
   for dep, key in deps.items():
     output = subprocess.check_output('cd skia && bin/gn desc out/linux {} sources'.format(dep), shell=True)
     if output:
@@ -275,7 +275,8 @@ def generate_separated_sources(platform_sources):
     'pdf': {
       'skia/src/core/SkMD5.cpp',
     },
-    'gpu': set()
+    'gpu': set(),
+    'xps': set()
   })
 
   for plat in platform_sources.keys():
@@ -425,6 +426,9 @@ def write_mozbuild(sources):
 
   f.write("if CONFIG['MOZ_ENABLE_SKIA_PDF']:\n")
   write_sources(f, sources['pdf'], 4)
+
+  f.write("if CONFIG['MOZ_ENABLE_SKIA_XPS']:\n")
+  write_sources(f, sources['xps'], 4)
 
   f.write("if CONFIG['MOZ_ENABLE_SKIA_GPU']:\n")
   write_sources(f, sources['gpu'], 4)
